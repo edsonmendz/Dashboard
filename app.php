@@ -73,7 +73,7 @@ class Bd {
             select
                 SUM(total) as total_vendas
             from
-                tb_vendas
+                tb_vendas 
             where
                 data_venda between :data_inicio and :data_fim';
         $stmt = $this->conexao->prepare($query);
@@ -82,6 +82,94 @@ class Bd {
         $stmt->execute();
         
         return $stmt->fetch(PDO::FETCH_OBJ)->total_vendas;
+    }
+
+    public function getClientesAtivos() {
+        $query = '
+            select
+                count(*) as clientes_ativos
+            from
+                tb_clientes
+            where
+                cliente_ativo = 1';
+        $stmt = $this->conexao->prepare($query);
+        //$stmt->bindValue(':data_inicio', $this->dashboard->__get('data_inicio'));
+        //$stmt->bindValue(':data_fim', $this->dashboard->__get('data_fim'));
+        //$stmt->bindValue(':')
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_OBJ)->clientes_ativos;
+    }
+    public function getClientesInativos() {
+        $query = '
+            select
+                count(*) as clientes_inativos
+            from
+                tb_clientes
+            where
+                cliente_ativo = 0';
+        $stmt = $this->conexao->prepare($query);        
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_OBJ)->clientes_inativos;
+    }
+
+    public function getTotalReclamacoes() {
+        $query = '
+            select
+                count(*) as reclamacoes
+            from
+                tb_contatos
+            where
+                tipo_contato = 1';
+        $stmt = $this->conexao->prepare($query);               
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_OBJ)->reclamacoes;
+    }
+
+    public function getTotalElogios() {
+        $query = '
+            select
+                count(*) as elogios
+            from
+                tb_contatos
+            where
+                tipo_contato = 3';
+        $stmt = $this->conexao->prepare($query);               
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_OBJ)->elogios;
+    }
+
+    public function getTotalSugestoes() {
+        $query = '
+            select
+                count(*) as sugestoes
+            from
+                tb_contatos
+            where
+                tipo_contato = 2';
+        $stmt = $this->conexao->prepare($query);               
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_OBJ)->sugestoes;
+    }
+
+    public function getTotalDespesas() {
+        $query = '
+            select
+                SUM(total) as total_despesas
+            from
+                tb_despesas 
+            where
+                data_despesa between :data_inicio and :data_fim';
+        $stmt = $this->conexao->prepare($query);
+        $stmt->bindValue(':data_inicio', $this->dashboard->__get('data_inicio'));
+        $stmt->bindValue(':data_fim', $this->dashboard->__get('data_fim'));
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_OBJ)->total_despesas;
     }
 }
 
@@ -102,8 +190,14 @@ $bd = new Bd($conexao, $dashboard);
 
 $dashboard->__set('numeroVendas', $bd->getNumeroVendas());
 $dashboard->__set('totalVendas', $bd->getTotalVendas());
-
-//print_r($dashboard);
-echo json_encode($dashboard);
+$dashboard->__set('clientesAtivos', $bd->getClientesAtivos());
+$dashboard->__set('clientesInativos', $bd->getClientesInativos());
+$dashboard->__set('totalReclamacoes', $bd->getTotalReclamacoes());
+$dashboard->__set('totalElogios', $bd->getTotalElogios());
+$dashboard->__set('totalSugestoes', $bd->getTotalSugestoes());
+$dashboard->__set('totalDespesas', $bd->getTotalDespesas());
+    
+    echo json_encode($dashboard);
+    
 
 ?>

@@ -28,6 +28,15 @@ $(document).ready(() => {
             success: dados => {
                 $('#numeroVendas').html(dados.numeroVendas)
                 $('#totalVendas').html(dados.totalVendas)
+                $('#clientesAtivos').html(dados.clientesAtivos)
+                $('#clientesInativos').html(dados.clientesInativos)
+                $('#totalReclamacoes').html(dados.totalReclamacoes)
+                $('#totalElogios').html(dados.totalElogios)
+                $('#totalSugestoes').html(dados.totalSugestoes)
+                $('#totalDespesas').html(dados.totalDespesas)
+
+                console.log(dados)
+                
              },               
             error: erro => {console.log(erro)}
 
