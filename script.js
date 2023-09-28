@@ -3,6 +3,7 @@ $(document).ready(() => {
         //$('#pagina').load('documentacao.html')
         $.get('documentacao.html', data => {
             $('#pagina').html(data)
+            console.log('Clique')
         })
     })
 
